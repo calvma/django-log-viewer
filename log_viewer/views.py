@@ -60,9 +60,7 @@ class LogJsonView(JSONResponseMixin, TemplateView):
             try:
                 file_log = os.path.join(settings.LOG_VIEWER_FILES_DIR, file_name)
                 with open(file_log, encoding='utf8', errors='ignore') as file:
-                    next_lines = list(islice(readlines_reverse(file, exclude='Not Found'),
-                                             (page - 1) * lines_per_page,
-                                             page * lines_per_page))
+                    next_lines = file.readlines()
 
                     if len(next_lines) < lines_per_page:
                         context['last'] = True
@@ -111,6 +109,10 @@ class LogDownloadView(TemplateView):
         log_file_result = get_log_files(settings.LOG_VIEWER_FILES_DIR)
 
         if file_name:
+
+            if '_5F' in file_name:
+                file_name = file_name.replace("_5F", "_")
+
             file_path = unquote(file_name)
             uri = os.path.join(settings.LOG_VIEWER_FILES_DIR, file_path)
 
